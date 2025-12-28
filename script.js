@@ -61,8 +61,44 @@ function showPrevImage() {
     openLightbox(currentImageIndex);
 }
 
+// Create sparkle particles
+function createSparkles() {
+    const sparklesContainer = document.querySelector('.sparkles');
+    if (!sparklesContainer) return;
+    
+    const sparkleCount = 50; // Number of sparkles
+    
+    for (let i = 0; i < sparkleCount; i++) {
+        const sparkle = document.createElement('div');
+        sparkle.className = 'sparkle';
+        
+        // Random horizontal position
+        const x = Math.random() * 100;
+        sparkle.style.left = `${x}%`;
+        
+        // Start from top (will fall down)
+        sparkle.style.top = `-${Math.random() * 20}%`;
+        
+        // Random animation delay for continuous effect
+        sparkle.style.animationDelay = `${Math.random() * 8}s`;
+        
+        // Random animation duration for variety (6-12 seconds)
+        sparkle.style.animationDuration = `${6 + Math.random() * 6}s`;
+        
+        // Slightly random size
+        const size = 1 + Math.random() * 2;
+        sparkle.style.width = `${size}px`;
+        sparkle.style.height = `${size}px`;
+        
+        sparklesContainer.appendChild(sparkle);
+    }
+}
+
 // Event listeners
 document.addEventListener('DOMContentLoaded', () => {
+    // Create sparkles
+    createSparkles();
+    
     // Initialize gallery
     initGallery();
     
@@ -142,6 +178,17 @@ const observer = new IntersectionObserver((entries) => {
     });
 }, observerOptions);
 
+// Gallery section light shaft observer
+const galleryObserver = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+        if (entry.isIntersecting && !entry.target.classList.contains('scrolled')) {
+            entry.target.classList.add('scrolled');
+        }
+    });
+}, {
+    threshold: 0.2
+});
+
 // Observe gallery items when they're created
 document.addEventListener('DOMContentLoaded', () => {
     setTimeout(() => {
@@ -152,4 +199,10 @@ document.addEventListener('DOMContentLoaded', () => {
             observer.observe(item);
         });
     }, 100);
+    
+    // Observe gallery section for light shaft effect
+    const gallerySection = document.querySelector('.gallery-section');
+    if (gallerySection) {
+        galleryObserver.observe(gallerySection);
+    }
 });
